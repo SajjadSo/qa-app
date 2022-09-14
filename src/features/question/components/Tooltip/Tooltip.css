@@ -1,0 +1,41 @@
+.tooltipContainer {
+  position: relative;
+}
+
+.tooltipContainer:hover .customTooltip {
+  visibility: visible;
+}
+
+.customTooltip {
+  position: absolute;
+  color: #fff;
+  background-color: rgba(100, 100, 100, 0.9);
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  padding: 3px 10px;
+  border-radius: 5px;
+  text-align: center;
+  min-width: max-content;
+  font-size: 12px;
+  font-weight: 400;
+  visibility: hidden;
+  z-index: 9999;
+}
+
+.customTooltip:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: calc(50% - 10px);
+  top: 100%;
+  border-top: 10px solid rgba(100, 100, 100, 0.9);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 1px solid transparent;
+}
+
+.disabled {
+  visibility: hidden;
+}
