@@ -9,7 +9,8 @@ interface IAddQuestionProps {}
 
 const AddQuestion: React.FunctionComponent<IAddQuestionProps> = props => {
   const dispatch = useAppDispatch();
-  const [error, setError] = React.useState<string>("");
+  const [questionError, setQuestionError] = React.useState<string>("");
+  const [answerError, setAnswerError] = React.useState<string>("");
   const questionRef = React.useRef<HTMLInputElement | null>(null);
   const answerRef = React.useRef<HTMLInputElement | null>(null);
   const delayRef = React.useRef<HTMLInputElement | null>(null);
@@ -17,11 +18,20 @@ const AddQuestion: React.FunctionComponent<IAddQuestionProps> = props => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (questionRef.current?.value === "" || answerRef.current?.value === "") {
-      return setError("All fields are mandatory");
+    if (questionRef.current?.value.trim() === "") {
+      setQuestionError("Question field is mandatory");
     }
 
-    setError("");
+    if (answerRef.current?.value.trim() === "") {
+      setAnswerError("Answer field is mandatory");
+    }
+
+    if (questionRef.current?.value.trim() === "" || answerRef.current?.value.trim() === "") {
+      return;
+    }
+
+    setQuestionError("");
+    setAnswerError("");
 
     const question: IQuestion = {
       id: uuidv4(),
@@ -47,15 +57,16 @@ const AddQuestion: React.FunctionComponent<IAddQuestionProps> = props => {
         </Tooltip>
       </Stack>
 
-      {error && <Alert variant="danger">{error}</Alert>}
       <Form className="my-3" onSubmit={e => handleSubmit(e)}>
         <Form.Group className="mb-3" controlId="formBasicQuestion">
           <Form.Label>Question</Form.Label>
           <Form.Control type="text" placeholder="Enter Question" ref={questionRef} />
+          {questionError && <Alert variant="danger">{questionError}</Alert>}
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicAnswer">
           <Form.Label>Answer</Form.Label>
           <Form.Control type="text" placeholder="Enter Answer" ref={answerRef} />
+          {answerError && <Alert variant="danger">{answerError}</Alert>}
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicCheckboxDelay">
           <Form.Check type="checkbox" label="Save me after 5 seconds delay" ref={delayRef} />

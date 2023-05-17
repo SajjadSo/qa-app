@@ -9,6 +9,7 @@ interface IQuestionProps {
 
 const Question: React.FC<IQuestionProps> = ({ question, deleteQuestion }) => {
   const [answerVisible, setAnswerVisible] = React.useState<boolean>(false);
+  console.log(question.id);
 
   return (
     <div className="mb-3">
@@ -36,4 +37,4 @@ const Question: React.FC<IQuestionProps> = ({ question, deleteQuestion }) => {
   );
 };
 
-export default Question;
+export default React.memo(Question);

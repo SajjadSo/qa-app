@@ -13,10 +13,11 @@ interface IQuestionsListProps {}
 const QuestionsList: React.FC<IQuestionsListProps> = () => {
   const questions = useAppSelector(selectQuestions);
   const dispatch = useAppDispatch();
+  const [filteredQuestions, setFilteredQuestions] = React.useState<IQuestion[]>(questions);
 
-  const deleteQuestion = (question: IQuestion) => {
+  const deleteQuestion = React.useCallback((question: IQuestion) => {
     dispatch(removeQuestion(question));
-  };
+  }, []);
 
   const deleteAllQuestions = () => {
     dispatch(removeAllQuestions());
@@ -26,7 +27,26 @@ const QuestionsList: React.FC<IQuestionsListProps> = () => {
     dispatch(sortQuestions());
   };
 
-  const renderQuestionList = questions.map((question: IQuestion) => (
+  React.useEffect(() => {
+    setFilteredQuestions(questions);
+  }, [questions]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+
+    if (searchTerm !== "") {
+      const newQuestions = questions.filter(
+        question =>
+          question.question.toLowerCase().includes(searchTerm) || question.answer.toLowerCase().includes(searchTerm)
+      );
+
+      setFilteredQuestions(newQuestions);
+    } else {
+      setFilteredQuestions(questions);
+    }
+  };
+
+  const renderQuestionList = filteredQuestions.map((question: IQuestion) => (
     <Question key={question.id} question={question} deleteQuestion={deleteQuestion} />
   ));
 
@@ -64,7 +84,14 @@ const QuestionsList: React.FC<IQuestionsListProps> = () => {
         </Button>
       </Stack>
 
-      <div>{questions.length > 0 ? renderQuestionList : <Alert variant="danger">No questions yet :-(</Alert>}</div>
+      <div className="my-5">
+        <label>search: </label>
+        <input type="text" placeholder="search" onChange={handleSearch}></input>
+      </div>
+
+      <div>
+        {filteredQuestions.length > 0 ? renderQuestionList : <Alert variant="danger">No questions yet :-(</Alert>}
+      </div>
     </>
   );
 };
